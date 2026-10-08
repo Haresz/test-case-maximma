@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sia-backend-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-sia}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-sia}
+      POSTGRES_DB: ${DB_NAME:-sia_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-sia} -d ${DB_NAME:-sia_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
+    name: sia-pgdata
